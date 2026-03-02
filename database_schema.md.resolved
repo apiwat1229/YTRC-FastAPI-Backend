@@ -1,0 +1,593 @@
+```mermaid
+erDiagram
+    approval_logs {
+        VARCHAR id PK
+        VARCHAR approval_request_id FK
+        VARCHAR action
+        JSONB old_value
+        JSONB new_value
+        VARCHAR actor_id
+        VARCHAR actor_name
+        VARCHAR actor_role
+        TEXT remark
+        VARCHAR ip_address
+        TEXT user_agent
+        DATETIME created_at
+    }
+    approval_requests {
+        VARCHAR id PK
+        VARCHAR request_type
+        VARCHAR entity_type
+        VARCHAR entity_id
+        VARCHAR source_app
+        VARCHAR action_type
+        JSONB current_data
+        JSONB proposed_data
+        TEXT reason
+        VARCHAR priority
+        VARCHAR status
+        VARCHAR requester_id FK
+        VARCHAR approver_id FK
+        DATETIME submitted_at
+        DATETIME acted_at
+        DATETIME expires_at
+        TEXT remark
+        DATETIME deleted_at
+        VARCHAR deleted_by
+    }
+    book_views {
+        VARCHAR id PK
+        VARCHAR book_id FK
+        VARCHAR user_id FK
+        DATETIME viewed_at
+    }
+    bookings {
+        VARCHAR id PK
+        INTEGER queue_no
+        VARCHAR booking_code
+        DATETIME date
+        VARCHAR start_time
+        VARCHAR end_time
+        VARCHAR slot
+        VARCHAR supplier_id
+        VARCHAR supplier_code
+        VARCHAR supplier_name
+        VARCHAR truck_type
+        VARCHAR truck_register
+        VARCHAR rubber_type
+        VARCHAR lot_no
+        FLOAT estimated_weight
+        FLOAT moisture
+        FLOAT drc_est
+        FLOAT drc_requested
+        FLOAT drc_actual
+        FLOAT cp_avg
+        VARCHAR grade
+        VARCHAR recorder
+        TEXT note
+        VARCHAR status
+        VARCHAR approved_by
+        DATETIME approved_at
+        DATETIME checkin_at
+        VARCHAR checked_in_by
+        DATETIME start_drain_at
+        VARCHAR start_drain_by
+        DATETIME stop_drain_at
+        VARCHAR stop_drain_by
+        TEXT drain_note
+        FLOAT weight_in
+        VARCHAR weight_in_by
+        FLOAT weight_out
+        VARCHAR weight_out_by
+        VARCHAR rubber_source
+        FLOAT trailer_weight_in
+        FLOAT trailer_weight_out
+        VARCHAR trailer_rubber_type
+        VARCHAR trailer_rubber_source
+        VARCHAR trailer_lot_no
+        FLOAT trailer_moisture
+        FLOAT trailer_drc_est
+        FLOAT trailer_drc_requested
+        FLOAT trailer_drc_actual
+        FLOAT trailer_cp_avg
+        VARCHAR trailer_grade
+        DATETIME created_at
+        DATETIME updated_at
+        DATETIME deleted_at
+        VARCHAR deleted_by
+    }
+    booking_lab_samples {
+        VARCHAR id PK
+        VARCHAR booking_id FK
+        INTEGER sample_no
+        BOOLEAN is_trailer
+        FLOAT before_press
+        FLOAT basket_weight
+        FLOAT cuplump_weight
+        FLOAT after_press
+        FLOAT percent_cp
+        FLOAT before_baking_1
+        FLOAT after_dryer_b1
+        FLOAT before_lab_dryer_b1
+        FLOAT after_lab_dryer_b1
+        FLOAT drc_b1
+        FLOAT moisture_percent_b1
+        FLOAT drc_dry_b1
+        FLOAT lab_drc_b1
+        FLOAT recal_drc_b1
+        FLOAT before_baking_2
+        FLOAT after_dryer_b2
+        FLOAT before_lab_dryer_b2
+        FLOAT after_lab_dryer_b2
+        FLOAT drc_b2
+        FLOAT moisture_percent_b2
+        FLOAT drc_dry_b2
+        FLOAT lab_drc_b2
+        FLOAT recal_drc_b2
+        FLOAT before_baking_3
+        FLOAT after_dryer_b3
+        FLOAT before_lab_dryer_b3
+        FLOAT after_lab_dryer_b3
+        FLOAT drc_b3
+        FLOAT moisture_percent_b3
+        FLOAT drc_dry_b3
+        FLOAT lab_drc_b3
+        FLOAT recal_drc_b3
+        FLOAT drc
+        FLOAT moisture_factor
+        FLOAT recal_drc
+        FLOAT difference
+        FLOAT p0
+        FLOAT p30
+        FLOAT pri
+        VARCHAR storage
+        VARCHAR recorded_by
+        DATETIME created_at
+        DATETIME updated_at
+    }
+    cpk_analyses {
+        VARCHAR id PK
+        VARCHAR title
+        FLOAT lsl
+        FLOAT usl
+        INTEGER subgroup_size
+        ARRAY data_points
+        TEXT note
+        VARCHAR recorded_by
+        DATETIME created_at
+        DATETIME updated_at
+    }
+    e_signatures {
+        VARCHAR id PK
+        VARCHAR employee_id
+        TEXT signature
+        BOOLEAN status
+        DATETIME created_at
+        DATETIME updated_at
+    }
+    it_assets {
+        VARCHAR id PK
+        VARCHAR code
+        VARCHAR name
+        VARCHAR category
+        INTEGER stock
+        INTEGER min_stock
+        VARCHAR location
+        VARCHAR description
+        VARCHAR image
+        FLOAT price
+        DATETIME received_date
+        VARCHAR receiver
+        VARCHAR serial_number
+        VARCHAR barcode
+        DATETIME created_at
+        DATETIME updated_at
+    }
+    it_tickets {
+        VARCHAR id PK
+        VARCHAR ticket_no
+        VARCHAR title
+        VARCHAR description
+        VARCHAR category
+        VARCHAR priority
+        VARCHAR location
+        VARCHAR status
+        VARCHAR requester_id FK
+        VARCHAR assignee_id FK
+        BOOLEAN is_asset_request
+        VARCHAR asset_id FK
+        INTEGER quantity
+        DATETIME expected_date
+        VARCHAR approver_id
+        DATETIME issued_at
+        VARCHAR issued_by
+        DATETIME resolved_at
+        DATETIME created_at
+        DATETIME updated_at
+    }
+    job_orders {
+        VARCHAR id PK
+        VARCHAR book_no
+        INTEGER no
+        VARCHAR job_order_no
+        VARCHAR contract_no
+        VARCHAR grade
+        VARCHAR other_grade
+        INTEGER quantity_bale
+        VARCHAR pallet_type
+        INTEGER order_quantity
+        BOOLEAN pallet_marking
+        VARCHAR note
+        VARCHAR qa_name
+        DATETIME qa_date
+        BOOLEAN is_closed
+        VARCHAR production_name
+        DATETIME production_date
+        DATETIME created_at
+        DATETIME updated_at
+    }
+    job_order_logs {
+        VARCHAR id PK
+        VARCHAR job_order_id FK
+        DATETIME date
+        VARCHAR shift
+        VARCHAR lot_start
+        VARCHAR lot_end
+        INTEGER quantity
+        VARCHAR sign
+        DATETIME created_at
+        DATETIME updated_at
+    }
+    knowledge_books {
+        VARCHAR id PK
+        VARCHAR title
+        TEXT description
+        VARCHAR category
+        VARCHAR file_type
+        VARCHAR file_path
+        VARCHAR file_name
+        INTEGER file_size
+        VARCHAR cover_image
+        VARCHAR author
+        VARCHAR uploaded_by FK
+        INTEGER views
+        INTEGER downloads
+        ARRAY tags
+        BOOLEAN is_published
+        DATETIME training_date
+        INTEGER attendees
+        DATETIME created_at
+        DATETIME updated_at
+    }
+    notifications {
+        VARCHAR id PK
+        VARCHAR title
+        TEXT message
+        VARCHAR type
+        VARCHAR status
+        VARCHAR user_id
+        VARCHAR sourceApp
+        VARCHAR actionType
+        VARCHAR entityId
+        VARCHAR actionUrl
+        JSONB metadata
+        VARCHAR approval_request_id
+        VARCHAR approval_status
+        DATETIME created_at
+    }
+    _NotificationGroupMembers {
+        VARCHAR A PK,FK
+        VARCHAR B PK,FK
+    }
+    NotificationGroup {
+        VARCHAR id PK
+        VARCHAR name
+        VARCHAR description
+        VARCHAR icon
+        VARCHAR color
+        BOOLEAN isActive
+        DATETIME createdAt
+        DATETIME updatedAt
+    }
+    notification_settings {
+        VARCHAR id PK
+        VARCHAR sourceApp
+        VARCHAR actionType
+        BOOLEAN isActive
+        JSONB recipientRoles
+        JSONB recipientGroups
+        JSONB recipientUsers
+        JSONB channels
+        DATETIME created_at
+        DATETIME updated_at
+    }
+    pools {
+        VARCHAR id PK
+        VARCHAR name
+        VARCHAR status
+        VARCHAR grade
+        VARCHAR rubber_type
+        FLOAT capacity
+        FLOAT total_weight
+        FLOAT total_gross_weight
+        DATETIME open_date
+        DATETIME close_date
+        DATETIME empty_date
+        DATETIME filling_date
+        VARCHAR production_plan
+        DATETIME created_at
+        DATETIME updated_at
+    }
+    pool_items {
+        VARCHAR id PK
+        VARCHAR pool_id FK
+        VARCHAR booking_id
+        VARCHAR lot_number
+        VARCHAR supplier_name
+        VARCHAR supplier_code
+        DATETIME date
+        FLOAT net_weight
+        FLOAT gross_weight
+        VARCHAR grade
+        VARCHAR rubber_type
+        DATETIME created_at
+    }
+    posts {
+        VARCHAR id PK
+        VARCHAR title
+        TEXT content
+        BOOLEAN published
+        VARCHAR authorId FK
+        DATETIME createdAt
+        DATETIME updatedAt
+    }
+    production_reports {
+        VARCHAR id PK
+        VARCHAR dryer_name
+        VARCHAR book_no
+        VARCHAR page_no
+        DATETIME production_date
+        VARCHAR shift
+        VARCHAR grade
+        FLOAT ratio_cl
+        FLOAT ratio_uss
+        FLOAT ratio_cutting
+        FLOAT weight_pallet_remained
+        INTEGER sample_accum_1
+        INTEGER sample_accum_2
+        INTEGER sample_accum_3
+        INTEGER sample_accum_4
+        INTEGER sample_accum_5
+        VARCHAR bale_bag_lot_no
+        VARCHAR checked_by
+        VARCHAR judged_by
+        VARCHAR issued_by
+        DATETIME issued_at
+        VARCHAR status
+        DATETIME created_at
+        DATETIME updated_at
+    }
+    production_report_rows {
+        VARCHAR id PK
+        VARCHAR report_id FK
+        VARCHAR start_time
+        VARCHAR pallet_type
+        VARCHAR lot_no
+        FLOAT weight_1
+        FLOAT weight_2
+        FLOAT weight_3
+        FLOAT weight_4
+        FLOAT weight_5
+        INTEGER sample_count
+        VARCHAR weight_1_status
+        VARCHAR weight_2_status
+        VARCHAR weight_3_status
+        VARCHAR weight_4_status
+        VARCHAR weight_5_status
+        VARCHAR sample_status
+    }
+    raw_material_plans {
+        VARCHAR id PK
+        VARCHAR plan_no
+        VARCHAR revision_no
+        VARCHAR ref_production_no
+        DATETIME issued_date
+        VARCHAR creator
+        VARCHAR checker
+        VARCHAR status
+        DATETIME created_at
+        DATETIME updated_at
+    }
+    raw_material_plan_pool_details {
+        VARCHAR id PK
+        VARCHAR plan_id FK
+        VARCHAR pool_no
+        FLOAT gross_weight
+        FLOAT net_weight
+        FLOAT drc
+        FLOAT moisture
+        FLOAT p0
+        FLOAT pri
+        DATETIME clear_date
+        VARCHAR grade
+        TEXT remark
+    }
+    raw_material_plan_rows {
+        VARCHAR id PK
+        VARCHAR plan_id FK
+        DATETIME date
+        VARCHAR day_of_week
+        VARCHAR shift
+        VARCHAR grade
+        FLOAT ratio_uss
+        FLOAT ratio_cl
+        FLOAT ratio_bk
+        FLOAT product_target
+        FLOAT cl_consumption
+        FLOAT ratio_b_or_c
+        VARCHAR plan1_pool
+        TEXT plan1_note
+        VARCHAR plan2_pool
+        TEXT plan2_note
+        VARCHAR plan3_pool
+        TEXT plan3_note
+        FLOAT cutting_percent
+        INTEGER cutting_palette
+        TEXT remarks
+        VARCHAR special_indicator
+    }
+    roles {
+        VARCHAR id PK
+        VARCHAR name
+        VARCHAR description
+        VARCHAR icon
+        VARCHAR color
+        ARRAY permissions
+        BOOLEAN is_active
+        DATETIME created_at
+        DATETIME updated_at
+    }
+    rubber_types {
+        VARCHAR id PK
+        VARCHAR code
+        VARCHAR name
+        TEXT description
+        VARCHAR category
+        BOOLEAN is_active
+        DATETIME deleted_at
+        VARCHAR deleted_by
+        DATETIME created_at
+        DATETIME updated_at
+    }
+    shipping_plans {
+        VARCHAR id PK
+        VARCHAR plan_no
+        VARCHAR customer
+        DATETIME plan_date
+        VARCHAR status
+        VARCHAR remark
+        DATETIME created_at
+        DATETIME updated_at
+    }
+    shipping_plan_items {
+        VARCHAR id PK
+        VARCHAR shipping_plan_id FK
+        VARCHAR row_id FK
+        INTEGER pallet_no
+        DATETIME created_at
+    }
+    provinces {
+        INTEGER id PK
+        VARCHAR code
+        VARCHAR name_th
+        VARCHAR name_en
+        DATETIME created_at
+    }
+    districts {
+        INTEGER id PK
+        INTEGER province_id FK
+        VARCHAR code
+        VARCHAR name_th
+        VARCHAR name_en
+        DATETIME created_at
+    }
+    subdistricts {
+        INTEGER id PK
+        INTEGER district_id FK
+        VARCHAR code
+        VARCHAR name_th
+        VARCHAR name_en
+        INTEGER zip_code
+        DATETIME created_at
+    }
+    suppliers {
+        VARCHAR id PK
+        VARCHAR code
+        VARCHAR display_name
+        VARCHAR tax_id
+        TEXT address
+        VARCHAR phone
+        VARCHAR email
+        INTEGER province_id FK
+        INTEGER district_id FK
+        INTEGER subdistrict_id FK
+        VARCHAR status
+        TEXT notes
+        ARRAY rubber_type_codes
+        VARCHAR first_name
+        VARCHAR last_name
+        VARCHAR title
+        VARCHAR avatar
+        VARCHAR zip_code
+        VARCHAR certificate_number
+        DATETIME certificate_expire
+        FLOAT score
+        FLOAT eudr_quota_used
+        FLOAT eudr_quota_current
+        DATETIME deleted_at
+        VARCHAR deleted_by
+        DATETIME created_at
+        DATETIME updated_at
+    }
+    ticket_comments {
+        VARCHAR id PK
+        TEXT content
+        VARCHAR ticket_id FK
+        VARCHAR user_id FK
+        DATETIME created_at
+    }
+    users {
+        VARCHAR id PK
+        VARCHAR email
+        VARCHAR username
+        TEXT password
+        VARCHAR role
+        VARCHAR first_name
+        VARCHAR last_name
+        VARCHAR display_name
+        VARCHAR department
+        VARCHAR position
+        VARCHAR employee_id
+        VARCHAR status
+        VARCHAR pin_code
+        VARCHAR avatar
+        JSONB permissions
+        JSONB preferences
+        BOOLEAN force_change_password
+        INTEGER failed_login_attempts
+        DATETIME last_login_at
+        VARCHAR signature_text
+        VARCHAR signature_style
+        VARCHAR role_id FK
+        DATETIME createdAt
+        DATETIME updatedAt
+    }
+    approval_logs }o--|| approval_requests : "approval_request_id"
+    approval_requests }o--|| users : "requester_id"
+    approval_requests }o--|| users : "approver_id"
+    book_views }o--|| knowledge_books : "book_id"
+    book_views }o--|| users : "user_id"
+    booking_lab_samples }o--|| bookings : "booking_id"
+    it_tickets }o--|| users : "requester_id"
+    it_tickets }o--|| users : "assignee_id"
+    it_tickets }o--|| it_assets : "asset_id"
+    job_order_logs }o--|| job_orders : "job_order_id"
+    knowledge_books }o--|| users : "uploaded_by"
+    _NotificationGroupMembers }o--|| NotificationGroup : "A"
+    _NotificationGroupMembers }o--|| users : "B"
+    pool_items }o--|| pools : "pool_id"
+    posts }o--|| users : "authorId"
+    production_report_rows }o--|| production_reports : "report_id"
+    raw_material_plan_pool_details }o--|| raw_material_plans : "plan_id"
+    raw_material_plan_rows }o--|| raw_material_plans : "plan_id"
+    shipping_plan_items }o--|| shipping_plans : "shipping_plan_id"
+    shipping_plan_items }o--|| production_report_rows : "row_id"
+    districts }o--|| provinces : "province_id"
+    subdistricts }o--|| districts : "district_id"
+    suppliers }o--|| provinces : "province_id"
+    suppliers }o--|| districts : "district_id"
+    suppliers }o--|| subdistricts : "subdistrict_id"
+    ticket_comments }o--|| it_tickets : "ticket_id"
+    ticket_comments }o--|| users : "user_id"
+    users }o--|| roles : "role_id"
+```

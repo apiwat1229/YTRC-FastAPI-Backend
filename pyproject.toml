@@ -1,0 +1,37 @@
+[project]
+name = "ytrc-center-api"
+version = "1.0.0"
+description = "FastAPI migration workspace for YTRC Center backend"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.116.0",
+  "uvicorn[standard]>=0.35.0",
+  "sqlalchemy[asyncio]>=2.0.43",
+  "asyncpg>=0.30.0",
+  "email-validator>=2.2.0",
+  "python-jose[cryptography]>=3.5.0",
+  "bcrypt>=4.0.0",
+  "pydantic-settings>=2.10.1",
+  "python-multipart>=0.0.20",
+  "python-socketio[asyncio]>=5.11.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.4.1",
+  "pytest-asyncio>=1.1.0",
+  "httpx>=0.28.1",
+  "ruff>=0.12.11",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
