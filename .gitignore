@@ -34,5 +34,8 @@ uploads/
 .DS_Store
 Thumbs.db
 
+# Local convenience scripts (may contain server credentials)
+scripts/
+
 # Alembic
 alembic/versions/*.pyc
