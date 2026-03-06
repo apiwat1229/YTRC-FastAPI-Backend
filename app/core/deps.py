@@ -6,6 +6,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.security import decode_token
 from app.db.session import get_db_session
 
+# Canonical admin role values — update here if role names change
+_ADMIN_ROLES: frozenset[str] = frozenset({"ADMIN", "admin", "Administrator"})
+
 
 async def db_session_dependency() -> AsyncGenerator[AsyncSession, None]:
     async for session in get_db_session():
@@ -14,10 +17,15 @@ async def db_session_dependency() -> AsyncGenerator[AsyncSession, None]:
 
 def _extract_bearer_token(authorization: str | None) -> str:
     if not authorization:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated"
+        )
     parts = authorization.split(" ")
     if len(parts) != 2 or parts[0].lower() != "bearer":
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authorization header")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authorization header",
+        )
     return parts[1]
 
 
@@ -29,7 +37,14 @@ async def get_current_user(
     try:
         payload = decode_token(token)
     except ValueError as exc:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token") from exc
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"
+        ) from exc
+
+    if payload.get("type") not in ("access", None):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token type"
+        )
 
     user = {
         "id": payload.get("sub"),
@@ -43,7 +58,9 @@ async def get_current_user(
         "scope": payload.get("scope"),
     }
     if not user["userId"]:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token payload")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token payload"
+        )
 
     request.state.user = user
     return user
@@ -54,30 +71,40 @@ def permissions_required(*required_permissions: str):
         if not required_permissions:
             return True
 
-        if user.get("email") == "apiwat.s@ytrc.co.th":
-            return True
-
         role = str(user.get("role") or "")
-        if role in {"ADMIN", "admin", "Administrator"}:
+        if role in _ADMIN_ROLES:
             return True
 
         permissions = user.get("permissions") or []
-        missing = [permission for permission in required_permissions if permission not in permissions]
+        missing = [
+            permission
+            for permission in required_permissions
+            if permission not in permissions
+        ]
         if missing:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient permissions")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient permissions"
+            )
         return True
 
     return guard
 
 
 def require_permission(permission: str):
-    """Dependency to check if user has required permission"""
-    async def permission_checker(current_user: dict = Depends(get_current_user)):
+    """Dependency to check if user has a specific permission."""
+
+    async def permission_checker(
+        current_user: dict = Depends(get_current_user),
+    ) -> dict:
+        role = str(current_user.get("role") or "")
+        if role in _ADMIN_ROLES:
+            return current_user
         user_permissions = current_user.get("permissions", [])
         if permission not in user_permissions:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Permission '{permission}' required"
+                detail=f"Permission '{permission}' required",
             )
         return current_user
+
     return permission_checker

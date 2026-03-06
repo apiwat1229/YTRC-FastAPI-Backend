@@ -21,6 +21,7 @@ from app.models.production_report_row import ProductionReportRow
 from app.models.raw_material_plan import RawMaterialPlan
 from app.models.raw_material_plan_pool_detail import RawMaterialPlanPoolDetail
 from app.models.raw_material_plan_row import RawMaterialPlanRow
+from app.models.refresh_token import RefreshToken
 from app.models.role import Role
 from app.models.rubber_type import RubberType
 from app.models.shipping_plan import ShippingPlan
@@ -31,6 +32,7 @@ from app.models.user import User
 
 __all__ = [
     "User",
+    "RefreshToken",
     "Post",
     "Role",
     "Notification",

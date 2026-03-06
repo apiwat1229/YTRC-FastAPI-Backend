@@ -1,0 +1,50 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main   # → deploy Production อัตโนมัติ
+      - dev    # → deploy Staging อัตโนมัติ
+
+jobs:
+  deploy:
+    name: Deploy to ${{ github.ref_name == 'main' && 'Production' || 'Staging' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: 22
+          script: |
+            set -e
+            cd /home/${{ secrets.SERVER_USER }}/ytrc-backend
+
+            echo ">>> Pulling latest code from ${{ github.ref_name }}..."
+            git fetch origin
+            git checkout ${{ github.ref_name }}
+            git pull origin ${{ github.ref_name }}
+
+            if [ "${{ github.ref_name }}" = "main" ]; then
+              echo ">>> Deploying PRODUCTION..."
+              docker compose -p ytrc-prod \
+                -f docker-compose.yml \
+                -f docker-compose.prod.yml \
+                --env-file .env.production \
+                up -d --build --remove-orphans
+              echo ">>> Production deployed on port 2530 ✓"
+            else
+              echo ">>> Deploying STAGING..."
+              docker compose -p ytrc-staging \
+                -f docker-compose.yml \
+                -f docker-compose.staging.yml \
+                --env-file .env.staging \
+                up -d --build --remove-orphans
+              echo ">>> Staging deployed on port 2531 ✓"
+            fi
+
+            echo ">>> Cleaning up unused Docker images..."
+            docker image prune -f

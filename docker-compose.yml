@@ -1,34 +1,39 @@
+# Base configuration — shared by all environments
+# ⚠️  ต้องใส่ -p (project name) ทุกครั้ง ไม่งั้น environment จะทับกัน
+#
+# รัน Production:
+#   docker-compose -p ytrc-prod -f docker-compose.yml -f docker-compose.prod.yml --env-file .env.production up -d --build
+#
+# รัน Staging:
+#   docker-compose -p ytrc-staging -f docker-compose.yml -f docker-compose.staging.yml --env-file .env.staging up -d --build
+#
+# หยุด Production:
+#   docker-compose -p ytrc-prod -f docker-compose.yml -f docker-compose.prod.yml down
+#
+# หยุด Staging:
+#   docker-compose -p ytrc-staging -f docker-compose.yml -f docker-compose.staging.yml down
+
 services:
   db:
     image: postgres:16-alpine
-    container_name: ytrc-fastapi-db
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_DB: ${POSTGRES_DB:-myapp}
-    ports:
-      - "5433:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d myapp"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-myapp}"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   pgadmin:
     image: dpage/pgadmin4:latest
-    container_name: ytrc-fastapi-pgadmin
     restart: unless-stopped
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@admin.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
       PGADMIN_CONFIG_SERVER_MODE: 'False'
-    ports:
-      - "5050:80"
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
     depends_on:
       - db
 
@@ -36,23 +41,15 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: ytrc-fastapi-api
     restart: unless-stopped
-    env_file:
-      - .env.docker
-    ports:
-      - "2530:2530"
     depends_on:
       db:
         condition: service_healthy
     volumes:
       - ./uploads:/app/uploads
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://127.0.0.1:2530/api/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
 
 volumes:
   postgres_data:
   pgadmin_data:
+  postgres_staging_data:
+  pgadmin_staging_data:

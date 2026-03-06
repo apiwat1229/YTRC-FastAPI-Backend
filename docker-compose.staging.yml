@@ -1,0 +1,31 @@
+# Staging environment override
+# Usage: docker-compose -p ytrc-staging -f docker-compose.yml -f docker-compose.staging.yml --env-file .env.staging up -d --build
+# Stop:  docker-compose -p ytrc-staging -f docker-compose.yml -f docker-compose.staging.yml down
+
+services:
+  db:
+    container_name: ytrc-staging-db
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_staging_data:/var/lib/postgresql/data
+
+  pgadmin:
+    container_name: ytrc-staging-pgadmin
+    ports:
+      - "5051:80"
+    volumes:
+      - pgadmin_staging_data:/var/lib/pgadmin
+
+  api:
+    container_name: ytrc-staging-api
+    env_file:
+      - .env.staging
+    ports:
+      - "2531:2531"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:2531/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "2531", "--log-level", "debug"]

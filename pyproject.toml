@@ -15,6 +15,7 @@ dependencies = [
   "pydantic-settings>=2.10.1",
   "python-multipart>=0.0.20",
   "python-socketio[asyncio]>=5.11.0",
+  "slowapi>=0.1.9",
 ]
 
 [project.optional-dependencies]

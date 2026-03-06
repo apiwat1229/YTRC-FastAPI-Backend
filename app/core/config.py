@@ -17,10 +17,15 @@ class Settings(BaseSettings):
     api_port: int = 2530
     api_prefix: str = "/api"
 
-    jwt_secret: str = "your-secret-key"
-    jwt_expiration: str = "7d"
+    jwt_secret: str  # Required — must be set in .env, no default allowed
+    jwt_expiration: str = "1h"
+    jwt_refresh_expiration: str = "7d"
 
-    cors_origins: list[str] = ["http://localhost:3000", "http://localhost:8888", "http://localhost:5173"]
+    cors_origins: list[str] = [
+        "http://localhost:3000",
+        "http://localhost:8888",
+        "http://localhost:5173",
+    ]
     environment: str = "development"
 
     @field_validator("cors_origins", mode="before")
